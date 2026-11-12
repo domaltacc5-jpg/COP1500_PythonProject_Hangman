@@ -18,6 +18,8 @@ def _run_pip_upgrade():
         subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", "pip"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError as e:
         print(f"Failed to upgrade pip. Error: {e}")
+
+#Run package manager
 update_packages()
 _run_pip_upgrade()
 
