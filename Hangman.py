@@ -56,10 +56,18 @@ def generate_hints(random_word, ww, max_per_category=5):
 
     return hints
 
+points = 0
+with open("HighScore.txt", "r") as file:
+    highscore = int(file.readline().strip())
+
+
+
+
 #main game starts here
 def main():
+    global points
     print("Welcome to Hangman")
-    print("What difficulty would you like: Easy, Normal, Hard")
+    print("What difficulty would you like: Easy, Normal, Hard, Random, Custom")
     max_attempts = 0
     r_num = 0
     #Run Difficulty selection
@@ -81,10 +89,42 @@ def main():
 
         elif mode == "hard":
             max_attempts_temp = random.randint(3, 4)
-            r_num_temp = random.randint(6, 8)
+            r_num_temp = random.randint(6, 10)
             max_attempts = max_attempts_temp
             r_num = r_num_temp
             break
+
+        elif mode == "random":
+            max_attempts_temp = random.randint(3, 7)
+            r_num_temp = random.randint(3, 10)
+            max_attempts = max_attempts_temp
+            r_num = r_num_temp
+            break
+
+        elif mode == "custom":
+            while True:
+                print("Set the max attempts allowed in a round: 1-6")
+                max_attempts_input = int(input())
+                if max_attempts_input < 1 or max_attempts_input > 6:
+                    print("Please enter a valid number in the range")
+                    continue
+                else:
+                    max_attempts_temp = max_attempts_input
+                    max_attempts = max_attempts_temp
+                    break
+
+            while True:
+                print("Set the letter count for the generated word: Minimum of 2")
+                r_num_input = int(input())
+                if r_num_input < 2:
+                    print("Please enter a valid number in the range")
+                    continue
+                else:
+                    r_num_temp = r_num_input
+                    r_num = r_num_temp
+                    break
+            break
+
 
         else:
             print("Please enter one of the options: easy, normal, hard")
@@ -182,7 +222,13 @@ def main():
                 display += letter + " "
             else:
                 display += "_ "
-        print(hangman[wrong_guesses])
+        if wrong_guesses == (max_attempts - 1):
+            print(hangman[6])
+        elif wrong_guesses == max_attempts:
+            print(hangman[-1])
+        else:
+            print(hangman[wrong_guesses])
+        print(f"You have {points} points!")
         print(hint)
         print("Word:", display)
 
@@ -205,10 +251,13 @@ def main():
 
         if guess in selected_word:
             print("Correct guess!")
+            points += 1
         else:
             wrong_guesses += 1
             print("Wrong guess!")
             print("(", wrong_guesses, "/", max_attempts, ")")
+            if points > 0:
+                points -= 1
     else:
         print(hangman[wrong_guesses])
         print("Game Over!")
@@ -222,5 +271,16 @@ if __name__ == "__main__":
         user_choice = input("\nWould you like to try again? (y/n): ").lower().strip()
 
         if user_choice != "y":
+            print("Updating HighScore.....")
+            with open ("HighScore.txt", "r+", encoding="utf8") as file:
+                temp_highscore = int(file.readline().strip())
+                if temp_highscore < 0:
+                    temp_highscore = 0
+                if temp_highscore < points:
+                    with open("HighScore.txt", "w", encoding="utf8") as f:
+                        pass
+                    file.write(str(points))
+            if points > highscore:
+                print("New High Score!")
             print("Good Game!")
             break
