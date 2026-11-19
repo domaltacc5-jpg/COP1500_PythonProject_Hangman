@@ -57,7 +57,7 @@ def generate_hints(random_word, ww, max_per_category=5):
 
     return hints
 
-points = 50
+points = 0
 try:
     with open("HighScore.txt", "r", encoding="utf-8") as file:
         highscore = int(file.read().strip() or 0)
